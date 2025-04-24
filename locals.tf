@@ -34,6 +34,7 @@ locals {
 
   batch_s3_task_role_name   = "${local.resource_prefix}batch_s3_task_role${local.resource_suffix}"
   metaflow_batch_image_name = "${local.resource_prefix}batch${local.resource_suffix}"
+<<<<<<< HEAD
   eks_name                  = "${local.resource_prefix}-eks${local.resource_suffix}"
 
   database_name                   = var.create_datastore ? module.metaflow-datastore[0].database_name : var.database_name
@@ -46,4 +47,20 @@ locals {
 
 
   sgs_access_to_rds = var.create_managed_metaflow_metadata_service ? [module.metaflow-metadata-service[0].metadata_service_security_group_id] : []
+=======
+  metadata_service_container_image = (
+    var.metadata_service_container_image == "" ?
+    module.metaflow-common.default_metadata_service_container_image :
+    var.metadata_service_container_image
+  )
+  ui_static_container_image = (
+    var.ui_static_container_image == "" ?
+    module.metaflow-common.default_ui_static_container_image :
+    var.ui_static_container_image
+  )
+
+  # RDS PostgreSQL >= 15 requires SSL by default
+  # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL.Concepts.General.SSL.html#PostgreSQL.Concepts.General.SSL.Requiring
+  database_ssl_mode = tonumber(split(".", var.db_engine_version)[0]) >= 15 ? "require" : "disable"
+>>>>>>> 238740f (Fix connections to PostgreSQL 15 and later (#95))
 }
